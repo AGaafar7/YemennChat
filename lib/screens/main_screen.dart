@@ -39,34 +39,20 @@ class _MainScreenState extends State<MainScreen> {
             allowUniversalAccessFromFileURLs: true,
             allowFileAccessFromFileURLs: true,
             allowsInlineMediaPlayback: true,
+            iframeAllow:
+                "camera; microphone; file", // Explicitly allowing media access
+            iframeAllowFullscreen: true,
           ),
           onWebViewCreated: (controller) {
             webViewController = controller;
           },
-
-          onPermissionRequest: (
-            InAppWebViewController controller,
-            PermissionRequest permissionRequest,
-          ) async {
-            _requestPermissions();
-            if (permissionRequest.resources.contains(
-              PermissionResourceType.MICROPHONE,
-            )) {
-              final PermissionStatus permissionStatus =
-                  await Permission.microphone.request();
-              if (permissionStatus.isGranted) {
-                return PermissionResponse(
-                  resources: permissionRequest.resources,
-                  action: PermissionResponseAction.GRANT,
-                );
-              } else if (permissionStatus.isDenied) {
-                return PermissionResponse(
-                  resources: permissionRequest.resources,
-                  action: PermissionResponseAction.DENY,
-                );
-              }
-            }
+          onPermissionRequest: (controller, permissionRequest) async {
+            return PermissionResponse(
+              action: PermissionResponseAction.GRANT,
+              resources: permissionRequest.resources,
+            );
           },
+         
         ),
       ),
     );
